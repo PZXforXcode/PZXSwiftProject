@@ -91,11 +91,15 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         let evaluation: ChallengeEvaluation
         switch challenge.protectionSpace.authenticationMethod {
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
+             NSURLAuthenticationMethodNegotiate:
+            evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #if canImport(Security)
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
-             NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate:
+        case NSURLAuthenticationMethodClientCertificate:
             evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #endif
         default:
             evaluation = (.performDefaultHandling, nil, nil)
         }
@@ -107,6 +111,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(evaluation.disposition, evaluation.credential)
     }
 
+    #if canImport(Security)
     /// Evaluates the server trust `URLAuthenticationChallenge` received.
     ///
     /// - Parameter challenge: The `URLAuthenticationChallenge`.
@@ -133,6 +138,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
             return (.cancelAuthenticationChallenge, nil, error.asAFError(or: .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))))
         }
     }
+    #endif
 
     /// Evaluates the credential-based authentication `URLAuthenticationChallenge` received for `task`.
     ///
@@ -224,6 +230,25 @@ extension SessionDelegate: URLSessionTaskDelegate {
 // MARK: URLSessionDataDelegate
 
 extension SessionDelegate: URLSessionDataDelegate {
+    open func urlSession(_ session: URLSession,
+                         dataTask: URLSessionDataTask,
+                         didReceive response: URLResponse,
+                         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: response)
+
+        guard let response = response as? HTTPURLResponse else { completionHandler(.allow); return }
+
+        if let request = request(for: dataTask, as: DataRequest.self) {
+            request.didReceiveResponse(response, completionHandler: completionHandler)
+        } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
+            request.didReceiveResponse(response, completionHandler: completionHandler)
+        } else {
+            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive response")
+            completionHandler(.allow)
+            return
+        }
+    }
+
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
 
@@ -232,7 +257,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
             request.didReceive(data: data)
         } else {
-            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive")
+            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive data")
             return
         }
     }
