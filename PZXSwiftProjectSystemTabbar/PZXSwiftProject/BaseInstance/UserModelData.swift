@@ -20,7 +20,11 @@ struct UserModel:Codable {
     var Token: String = ""
     /** 头像*/
     var avatarUrl: String = ""
-
+    /** 验证token*/
+    var accessToken: String?
+    
+    /** 刷新token*/
+    var refreshToken: String?
     
 //    private enum CodingKeys: String, CodingKey {
 //        case name

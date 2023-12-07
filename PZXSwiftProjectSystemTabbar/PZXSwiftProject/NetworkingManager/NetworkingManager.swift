@@ -7,9 +7,8 @@
 
 import Foundation
 import Alamofire
-import HandyJSON
 
-typealias NetSuccessClosure = (_ baseModel: NetBaseModel?) -> Void
+typealias NetSuccessClosure<T: Codable> = (_ baseModel: NetBaseModel<T>?) -> Void
 typealias NetFailedClosure = (_ error: NetworkingError) -> Void
 typealias NetRequestClosure = (_ success: Bool, _ message: String ) -> Void
 
@@ -26,59 +25,61 @@ public func convertJSONToModel<T: Codable>(jsonObject: AnyObject, modelType: T.T
 
 class NetworkingManager {
 
-    
-    public class func requestFunc(apiModel: inout APIModel, success: @escaping NetSuccessClosure, failure: @escaping NetFailedClosure) {
-        
-        let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
-        
-        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: nil).response { (response) in
-            
-            switch response.result {
-            
-            case .success(_):
-           
-                let json = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
-                
-                let model = NetBaseModel.deserialize(from: json)
-            
+    public class func requestFunc<T: Codable>(apiModel: inout APIModel, success: @escaping NetSuccessClosure<T>, failure: @escaping NetFailedClosure) {
 
-                if model != nil  {
+        let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
+
+        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header).response { (response) in
+
+            switch response.result {
+            case .success(_):
+                let json = response.data ?? Data()
+                let decoder = JSONDecoder()
+                let jsonString = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
+
+                // 使用 try? 处理错误
+                if let model = try? decoder.decode(NetBaseModel<T>.self, from: json) {
                     
-                    //暂时测试
+                    print("model?.code = \(String(describing: model.code))")
+                    print("model?.success = \(String(describing: model.success))")
+                    print("model?.msg = \(String(describing: model.msg))")
+                    print("model?.data = \(String(describing: model.data))")
+                    
                     success(model)
-//                    if model!.code == .Success  || model!.code == .OtherSuccess {
-//                        success(model)
-//                    }else {
-//                        failure(NetworkingError.init(code: model!.code.rawValue, localizedDescription: StringSafe(model?.message)))
-//                    }
-                }else {
+                } else {
+                    //解析错误
                     failure(NetworkingError.init(code: ErrorCode.Analysis.rawValue, localizedDescription: Analysis_Error))
                 }
             case let .failure(error):
                 if error.isResponseSerializationError {
-                    let json = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
-                    let model = NetBaseModel.deserialize(from: json)
-                    if model != nil {
-                        if model?.code == APICode.TokenExpire {//登录失效要单独处理
+                    let json = response.data ?? Data()
+                    let decoder = JSONDecoder()
+
+                    // 使用 try? 处理错误
+                    if let model = try? decoder.decode(NetBaseModel<T>.self, from: json) {
+                        if model.code == "0" {//token失效
                             NetworkingManager.TokenExpire()
-                        }else {
-                            failure(NetworkingError.init(code: model!.code.rawValue, localizedDescription: model!.message))
+                        } else {
+                            //解析错误
+                            failure(NetworkingError.init(code: IntSafe(model.code), localizedDescription: model.msg ?? "" ))
                         }
-                    }else {
+                    } else {
                         var desError = NetworkingError.init(code: error.responseCode ?? ErrorCode.Analysis.rawValue, localizedDescription: error.localizedDescription)
                         _ = desError.desc()
                         failure(desError)
                     }
-                }else {
-                    if (error.responseCode != nil)  {
-                        failure(NetworkingError.init(code: error.responseCode!, localizedDescription: NET_Connect_Error))
-                    }else {
+                } else {
+                    if let responseCode = error.responseCode {
+                        failure(NetworkingError.init(code: responseCode, localizedDescription: NET_Connect_Error))
+                    } else {
                         failure(NetworkingError.init(code: ErrorCode.Unkonwn.rawValue, localizedDescription: Unknown_Error))
                     }
                 }
             }
         }
     }
+
+
     
     
     
@@ -86,13 +87,15 @@ class NetworkingManager {
     private class func settingDefaultHttpHeaders(apiModel: APIModel) -> HTTPHeaders {
         var headers = HTTPHeaders.default
         
-//        headers.update(name: "Authorization", value: "Bearer " + currentUser.userToken)
-        headers.update(name: "cli-os", value: "ios")
-        headers.update(name: "Accept", value: "application/json")
-        headers.update(name: "Content_Type", value: "application/json")
-        headers.update(name: "cli-version", value: PZXAppInfo.appVersion)
-        headers.update(name: "cli-os-version", value: UIDevice.current.systemVersion)
-        headers.update(name: "api-version", value: "1.0.0")//第一个版本默认1.0.0
+        
+        let Language = "zh"
+        headers.update(name: "timezone", value: "Asia/Shangha")
+        headers.update(name: "Accept-Language", value: Language)
+        headers.update(name: "App-Version", value: PZXAppInfo.appVersionRemoveSuffix)
+        headers.update(name: "os", value: "iOS")
+        headers.update(name: "OS-Version", value: PZXAppInfo.iOSVersion)//第一个版本默认1.0.0
+        headers.update(name: "token", value: UserModelTool.CurrentUser()?.accessToken ?? "")
+        //        headers.update(name: "token", value:  "1231322133")
         
         return headers
     }

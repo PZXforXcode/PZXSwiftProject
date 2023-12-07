@@ -6,38 +6,16 @@
 //
 
 import Foundation
-import HandyJSON
-import SwiftyJSON
 
-class NetBaseModel: HandyJSON {
-    
-    var code: APICode = .Undefine
-    
-    var message: String = ""
-    
-    var data: AnyObject?
 
-    
-    //测试数据
-    var reason: String = ""
-    var result: AnyObject?
+class NetBaseModel<T: Codable>: Codable {
+    var code: String?
+    var msg: String?
+    var success: Bool?
+    var data: T?
 
-    required init() {}
-    
-    func swiftJsonData() -> JSON {
-        guard self.data != nil else {
-            return JSON("")
-        }
-        let json = try! JSONSerialization.data(withJSONObject: self.data!, options: .prettyPrinted)
-        return JSON(json)
-    }
-    
-    //测试数据
-    func swiftJsonDatatest() -> JSON {
-        guard self.result != nil else {
-            return JSON("")
-        }
-        let json = try! JSONSerialization.data(withJSONObject: self.result!, options: .prettyPrinted)
-        return JSON(json)
+    // MARK: - CodingKeys
+    private enum CodingKeys: String, CodingKey {
+        case code, msg, success, data
     }
 }

@@ -199,6 +199,9 @@ struct  PZXAppInfo {
     static let appDisplayName: String   = Bundle.main.infoDictionary!["CFBundleDisplayName"] as! String
     static let bundleIdentifier:String  = Bundle.main.bundleIdentifier! // Bundle Identifier
     static let appVersion:String        = Bundle.main.infoDictionary! ["CFBundleShortVersionString"] as! String// App 版本号
+    static var appVersionRemoveSuffix: String {
+          return removeSuffixFromVersion(version: appVersion)
+      }
     static let buildVersion : String    = Bundle.main.infoDictionary! ["CFBundleVersion"] as! String //Bulid 版本号
     static let iOSVersion:String        = UIDevice.current.systemVersion //ios 版本
     static let identifierNumber         = UIDevice.current.identifierForVendor //设备 udid
@@ -206,6 +209,15 @@ struct  PZXAppInfo {
     static let model                    = UIDevice.current.model // 设备型号
     static let localizedModel           = UIDevice.current.localizedModel  //设备区域化型号
 
+    static func removeSuffixFromVersion(version: String) -> String {
+         if let underscoreRange = version.range(of: "_") {
+             let truncatedVersion = version[..<underscoreRange.lowerBound]
+             let cleanedVersion = truncatedVersion.trimmingCharacters(in: .whitespacesAndNewlines)
+             return cleanedVersion
+         } else {
+             return version
+         }
+     }
 }
 
 enum ErrorCode: Int {

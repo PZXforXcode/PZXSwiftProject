@@ -7,9 +7,8 @@
 
 import Foundation
 import Alamofire
-import HandyJSON
 
-enum APICode: Int, HandyJSONEnum {
+enum APICode: Int {
     ///成功
     case Success                = 00
     ///成功
@@ -50,10 +49,10 @@ struct NetConfig {
 
 struct APIModel {
     var requestConfig: NetConfig?  //请求配置信息
-    var paramDic: Dictionary<String, String> = Dictionary() //请求体参数
+    var paramDic: Dictionary<String, Any> = Dictionary() //请求体参数
     var flag: Bool = false//true代表直接使用path 不要拼接头,默认为false
     
-    init(requestConfig: NetConfig, paramDic: Dictionary<String, String> = Dictionary(), flag: Bool = false) {
+    init(requestConfig: NetConfig, paramDic: Dictionary<String, Any> = Dictionary(), flag: Bool = false) {
         self.requestConfig = requestConfig
         self.paramDic = paramDic
         self.flag = flag
@@ -72,7 +71,7 @@ struct APIModel {
     }
 }
 
-struct NetworkingError: HandyJSON {
+struct NetworkingError: Codable {
     /// 错误码
     var code: Int = -1
     /// 错误描述

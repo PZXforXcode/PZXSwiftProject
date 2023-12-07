@@ -51,10 +51,9 @@ target 'PZXSwiftProject' do
 
 
 use_frameworks!
-	pod 'R.swift'
+  pod 'R.swift'
   	pod 'RxGesture'
   	pod 'RxCocoa'
-	pod 'HandyJSON'
   	pod 'Alamofire'
   	pod 'IQKeyboardManagerSwift'
 	pod 'MJRefresh'

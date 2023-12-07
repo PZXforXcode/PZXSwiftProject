@@ -14,7 +14,7 @@ import Foundation
 import UIKit
 
 
-class GlobalData: BaseViewModel {
+class GlobalData: Codable {
     
     static let shared = GlobalData()
     
@@ -88,29 +88,4 @@ class GlobalData: BaseViewModel {
 
 
 
-//MARK: =====================网络请求方法=====================
-extension GlobalData {
-    //MARK:获取全局配置
-    class func gettingCommonConfiguration (request: @escaping NetRequestClosure) {
-        var apiModel = APIModel(requestConfig: configurationAPI)
-        
-        NetworkingManager.requestFunc(apiModel: &apiModel) { (requestModel) in
-            
-            let jsonData = requestModel?.swiftJsonData()
-            
-            GlobalData.shared.isOpenGoladTaskMoudles            = jsonData!["opens"]["gold_task"].boolValue
-            GlobalData.shared.isOpenSplash                      = jsonData!["opens"]["open_app"].boolValue
-            GlobalData.shared.isOpenCCTTask                     = jsonData!["opens"]["cct_switch"].boolValue
-            GlobalData.shared.isOpenPeopleAuth                  = jsonData!["opens"]["real_name"].boolValue
-            GlobalData.shared.advertisingIntervalNumber         = jsonData!["news"]["advertising_interval_number"].intValue
-            GlobalData.shared.newsDetailWaitingTime             = jsonData!["news"]["news_detail_waiting_time"].intValue
-            GlobalData.shared.cctWebUrl                         = jsonData!["cct"]["web_url"].stringValue
 
-            request(true,NET_Request_Success)
-        } failure: { (failureError) in
-            GlobalData.shared.isOpenGoladTaskMoudles = false
-            request(false,failureError.localizedDescription)
-        }
-
-    }
-}

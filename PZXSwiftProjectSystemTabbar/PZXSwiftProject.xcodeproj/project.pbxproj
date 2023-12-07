@@ -20,10 +20,10 @@
 		898FC543265F7BC500CEEF48 /* NetConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898FC542265F7BC500CEEF48 /* NetConfig.swift */; };
 		898FC545265F7D3100CEEF48 /* SeverConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898FC544265F7D3100CEEF48 /* SeverConfig.swift */; };
 		898FC547265F7F3C00CEEF48 /* NetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898FC546265F7F3C00CEEF48 /* NetworkingManager.swift */; };
+		89C10F342B21B64200052F00 /* PCListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C10F332B21B64200052F00 /* PCListModel.swift */; };
 		89E58C292693DA3C007C58D8 /* NSArray+HYBUnicodeReadable.m in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C232693DA3C007C58D8 /* NSArray+HYBUnicodeReadable.m */; };
 		89E58C2A2693DA3C007C58D8 /* NSDictionary+HYBUnicodeReadable.m in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C242693DA3C007C58D8 /* NSDictionary+HYBUnicodeReadable.m */; };
 		89E58C2B2693DA3C007C58D8 /* NSSet+HYBUnicodeReadable.m in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C252693DA3C007C58D8 /* NSSet+HYBUnicodeReadable.m */; };
-		89E58C2D2693E300007C58D8 /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C2C2693E300007C58D8 /* BaseViewModel.swift */; };
 		89E58C332693E3B6007C58D8 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C2F2693E3B6007C58D8 /* UIColor+Extension.swift */; };
 		89E58C342693E3B6007C58D8 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C302693E3B6007C58D8 /* UIView+Extension.swift */; };
 		89E58C352693E3B6007C58D8 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E58C312693E3B6007C58D8 /* String+Extension.swift */; };
@@ -71,13 +71,13 @@
 		898FC542265F7BC500CEEF48 /* NetConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetConfig.swift; sourceTree = "<group>"; };
 		898FC544265F7D3100CEEF48 /* SeverConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeverConfig.swift; sourceTree = "<group>"; };
 		898FC546265F7F3C00CEEF48 /* NetworkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingManager.swift; sourceTree = "<group>"; };
+		89C10F332B21B64200052F00 /* PCListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PCListModel.swift; sourceTree = "<group>"; };
 		89E58C232693DA3C007C58D8 /* NSArray+HYBUnicodeReadable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+HYBUnicodeReadable.m"; sourceTree = "<group>"; };
 		89E58C242693DA3C007C58D8 /* NSDictionary+HYBUnicodeReadable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+HYBUnicodeReadable.m"; sourceTree = "<group>"; };
 		89E58C252693DA3C007C58D8 /* NSSet+HYBUnicodeReadable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSet+HYBUnicodeReadable.m"; sourceTree = "<group>"; };
 		89E58C262693DA3C007C58D8 /* NSArray+HYBUnicodeReadable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+HYBUnicodeReadable.h"; sourceTree = "<group>"; };
 		89E58C272693DA3C007C58D8 /* NSDictionary+HYBUnicodeReadable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+HYBUnicodeReadable.h"; sourceTree = "<group>"; };
 		89E58C282693DA3C007C58D8 /* NSSet+HYBUnicodeReadable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSSet+HYBUnicodeReadable.h"; sourceTree = "<group>"; };
-		89E58C2C2693E300007C58D8 /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
 		89E58C2F2693E3B6007C58D8 /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		89E58C302693E3B6007C58D8 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		89E58C312693E3B6007C58D8 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
@@ -203,7 +203,6 @@
 		898FC548265F86DA00CEEF48 /* BaseInstance */ = {
 			isa = PBXGroup;
 			children = (
-				89E58C2C2693E300007C58D8 /* BaseViewModel.swift */,
 				89E58C372693E41D007C58D8 /* GlobalData.swift */,
 				89E58C77269457E7007C58D8 /* UserModelData.swift */,
 			);
@@ -269,6 +268,7 @@
 				89E58C492693F19F007C58D8 /* ServerViewController.swift */,
 				89E58C6E26943250007C58D8 /* ServerTableViewCell.swift */,
 				89E58C6C26942E4E007C58D8 /* ServerViewController.storyboard */,
+				89C10F332B21B64200052F00 /* PCListModel.swift */,
 			);
 			path = "服务";
 			sourceTree = "<group>";
@@ -467,9 +467,9 @@
 				89E58C642693FA0C007C58D8 /* UILabel+Function.swift in Sources */,
 				89E58C2A2693DA3C007C58D8 /* NSDictionary+HYBUnicodeReadable.m in Sources */,
 				898FC543265F7BC500CEEF48 /* NetConfig.swift in Sources */,
+				89C10F342B21B64200052F00 /* PCListModel.swift in Sources */,
 				89E58C332693E3B6007C58D8 /* UIColor+Extension.swift in Sources */,
 				89E58C5F2693FA0C007C58D8 /* UIButton+Function.swift in Sources */,
-				89E58C2D2693E300007C58D8 /* BaseViewModel.swift in Sources */,
 				898FC541265F7B1800CEEF48 /* NetBaseModel.swift in Sources */,
 				89E58C602693FA0C007C58D8 /* UIView+Layer.m in Sources */,
 				89E58C672693FA0C007C58D8 /* Date+Field.swift in Sources */,

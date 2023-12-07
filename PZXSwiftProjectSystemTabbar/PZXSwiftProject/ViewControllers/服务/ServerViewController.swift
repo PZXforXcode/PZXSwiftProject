@@ -14,6 +14,9 @@ import UIKit
 import SwiftyJSON
 import Kingfisher
 
+// 假设你有一个数据模型叫做 YourDataModel
+
+
 class ServerViewController: RootViewController {
 
     @IBOutlet weak var testTableView: UITableView!
@@ -22,39 +25,44 @@ class ServerViewController: RootViewController {
 
     var dataSource:JSON = []
     
+    var listModel : PCListModel?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = RandomColor();
 
         self.topEdge.constant = NAVIGATION_HEIGHT
         // Do any additional setup after loading the view.
-            getData()
 
 
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getData()
+
+    }
     func getData() {
         
-        var apiModel = APIModel(requestConfig: listTestAPi,paramDic: ["key":"c1b594e8250a0097cdfdd90b89c53db9"],flag: true)
+        let chargeCode = "11"//充电桩code
+        let outdoorPowerCode = "21"//户外电源code
+        //app支持的协议Code
+        let protocolCodeArray = [
+            chargeCode,//充电桩
+            outdoorPowerCode//户外电源
+        ]
         
-        NetworkingManager.requestFunc(apiModel: &apiModel) { (requestModel) in
+        var apiModel = APIModel(requestConfig: getProductListAPI,paramDic: [
+            "protocolCode":protocolCodeArray
+        ])
+        NetworkingManager.requestFunc(apiModel: &apiModel) { [self] (model: NetBaseModel<PCListModel>?) in
             
-            self.view.hideAllToasts()
-            self.view.makeToast(requestModel?.reason, duration: 1.5, position: CSToastPositionBottom)
+            listModel = model?.data
+            testTableView.reloadData()
             
-            
-//            if let anyObject = requestModel?.result {
-//                    if let convertedModel = convertJSONToModel(jsonObject: anyObject, modelType: PCNBAMatch.self) {
-//                        self.pCNBAMatch = convertedModel
-//                        self.testTableView.reloadData()
-//                    }
-//                }
-
-
-        } failure: { (failureError) in
-            
+        } failure: { error in
             
         }
+
         
     }
     
@@ -65,7 +73,7 @@ extension ServerViewController:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
 //        return self.dataSource["matchs"].array?.count ?? 0
-        return  0
+        return  IntSafe(listModel?.list?.count)
 
     }
     
@@ -73,7 +81,7 @@ extension ServerViewController:UITableViewDelegate,UITableViewDataSource{
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ServerTableViewCell") as! ServerTableViewCell
 //        cell.rightLabel.text = StringSafe(dataSource["matchs"][indexPath.row]["date"].string)
-        cell.rightLabel.text = ""
+        cell.rightLabel.text = StringSafe(listModel?.list?[indexPath.row].names?.zh)
         let url = URL.init(string:"https://img1.baidu.com/it/u=1852955231,3943566939&fm=26&fmt=auto&gp=0.jpg")
         cell.leftImageView.kf.setImage(with: url,placeholder: nil)
         cell.leftImageView.contentMode = .scaleAspectFit
