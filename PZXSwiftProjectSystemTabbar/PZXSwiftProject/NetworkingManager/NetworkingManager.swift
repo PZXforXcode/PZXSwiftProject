@@ -38,7 +38,8 @@ class NetworkingManager {
                 let jsonString = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
 
                 // 使用 try? 处理错误
-                if let model = try? decoder.decode(NetBaseModel<T>.self, from: json) {
+                do {
+                    let model = try decoder.decode(NetBaseModel<T>.self, from: json)
                     
                     print("model?.code = \(String(describing: model.code))")
                     print("model?.success = \(String(describing: model.success))")
@@ -46,9 +47,10 @@ class NetworkingManager {
                     print("model?.data = \(String(describing: model.data))")
                     
                     success(model)
-                } else {
-                    //解析错误
-                    failure(NetworkingError.init(code: ErrorCode.Analysis.rawValue, localizedDescription: Analysis_Error))
+                } catch let parsingError {
+                    // 解析错误，打印错误信息
+                    print("解析错误日志: \(parsingError)")
+                    failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: Analysis_Error))
                 }
             case let .failure(error):
                 if error.isResponseSerializationError {
