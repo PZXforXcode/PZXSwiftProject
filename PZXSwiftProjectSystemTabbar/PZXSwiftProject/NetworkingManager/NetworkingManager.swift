@@ -57,30 +57,9 @@ class NetworkingManager {
                     failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: Analysis_Error))
                 }
             case let .failure(error):
-                if error.isResponseSerializationError {
-                    let json = response.data ?? Data()
-                    let decoder = JSONDecoder()
-
-                    // 使用 try? 处理错误
-                    if let model = try? decoder.decode(NetBaseModel<T>.self, from: json) {
-                        if model.code == "0" {//token失效
-                            NetworkingManager.TokenExpire()
-                        } else {
-                            //解析错误
-                            failure(NetworkingError.init(code: IntSafe(model.code), localizedDescription: model.msg ?? "" ))
-                        }
-                    } else {
-                        var desError = NetworkingError.init(code: error.responseCode ?? ErrorCode.Analysis.rawValue, localizedDescription: error.localizedDescription)
-                        _ = desError.desc()
-                        failure(desError)
-                    }
-                } else {
-                    if let responseCode = error.responseCode {
-                        failure(NetworkingError.init(code: responseCode, localizedDescription: NET_Connect_Error))
-                    } else {
-                        failure(NetworkingError.init(code: ErrorCode.Unkonwn.rawValue, localizedDescription: Unknown_Error))
-                    }
-                }
+                //网络错误
+                let networkingError = NetworkingError.fromAFError(error)
+                failure(networkingError)
             }
         }
     }
@@ -111,40 +90,9 @@ class NetworkingManager {
                     failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription:"网络错误"))
                 }
             case let .failure(error):
-                if error.isResponseSerializationError {
-                    let json = response.data ?? Data()
-                    
-                    do {
-                        if let jsonObject = try JSONSerialization.jsonObject(with: json, options: []) as? [String: Any] {
-                            if let code = jsonObject["code"] as? String, code == "0" {
-                                // token失效
-                                NetworkingManager.TokenExpire()
-                            } else {
-                                // 解析错误
-                                let model = NetworkingError(code: IntSafe(jsonObject["code"] as? String ?? ErrorCode.Analysis.rawValue),
-                                                            localizedDescription: jsonObject["msg"] as? String ?? "")
-                                failure(model)
-                            }
-                        } else {
-                            // 解析错误
-                            let desError = NetworkingError(code: error.responseCode ?? ErrorCode.Analysis.rawValue,
-                                                           localizedDescription: error.localizedDescription)
-                            failure(desError)
-                        }
-                    } catch {
-                        // 解析错误
-                        let desError = NetworkingError(code: ErrorCode.Analysis.rawValue,
-                                                       localizedDescription: error.localizedDescription)
-                        failure(desError)
-                    }
-                    
-                } else {
-                    if let responseCode = error.responseCode {
-                        failure(NetworkingError.init(code: responseCode, localizedDescription: "网络错误"))
-                    } else {
-                        failure(NetworkingError.init(code: ErrorCode.Unkonwn.rawValue, localizedDescription:"网络错误"))
-                    }
-                }
+                //网络错误
+                let networkingError = NetworkingError.fromAFError(error)
+                failure(networkingError)
             }
         }
     }
@@ -172,5 +120,24 @@ class NetworkingManager {
     ///token失效需要重新登录
     public class func TokenExpire() {
     
+    }
+    
+    
+}
+
+
+extension NetworkingError {
+    static func fromAFError(_ error: AFError) -> NetworkingError {
+        
+        if case let .sessionTaskFailed(sessionError) = error,
+           let urlError = sessionError as? URLError {
+            let errorCode = urlError.code.rawValue
+            if errorCode == -1001 {
+                return NetworkingError(code: error.responseCode ?? 0, localizedDescription: "请求超时")
+            } else {
+                return NetworkingError(code: error.responseCode ?? 0, localizedDescription: "网路错误")
+            }
+        }
+        return NetworkingError(code: error.responseCode ?? 0, localizedDescription: "网路错误")
     }
 }
