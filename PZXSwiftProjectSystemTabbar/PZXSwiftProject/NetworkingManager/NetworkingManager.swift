@@ -9,8 +9,12 @@ import Foundation
 import Alamofire
 
 typealias NetSuccessClosure<T: Codable> = (_ baseModel: NetBaseModel<T>?) -> Void
+typealias NetSuccessDic = (_ dic: [String: Any]?) -> Void
 typealias NetFailedClosure = (_ error: NetworkingError) -> Void
 typealias NetRequestClosure = (_ success: Bool, _ message: String ) -> Void
+
+let timeoutInterval: TimeInterval = 10 // 设置超时时间为10秒
+
 
 public func convertJSONToModel<T: Codable>(jsonObject: AnyObject, modelType: T.Type) -> T? {
      do {
@@ -29,7 +33,7 @@ class NetworkingManager {
 
         let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
 
-        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header).response { (response) in
+        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header,requestModifier: {$0.timeoutInterval = timeoutInterval}).response { (response) in
 
             switch response.result {
             case .success(_):
@@ -80,7 +84,70 @@ class NetworkingManager {
             }
         }
     }
-
+    
+    public class func requestDicFunc(apiModel: inout APIModel, success: @escaping NetSuccessDic, failure: @escaping NetFailedClosure) {
+        
+        let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
+        
+        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header,requestModifier: {$0.timeoutInterval = timeoutInterval}).response { (response) in
+            
+            switch response.result {
+            case .success(_):
+                let json = response.data ?? Data()
+                let jsonString = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
+                // 打印请求的 URL
+                if let url = response.request?.url {
+                    print("Request URL: \(url)")
+                }
+                do {
+                    if let data = jsonString.data(using: .utf8) {
+                        if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            print("jsonObject = \(jsonObject)")
+                            success(jsonObject)
+                        }
+                    }
+                } catch {
+                    print("Error converting JSON to [String: Any]: \(error)")
+                    failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription:"网络错误"))
+                }
+            case let .failure(error):
+                if error.isResponseSerializationError {
+                    let json = response.data ?? Data()
+                    
+                    do {
+                        if let jsonObject = try JSONSerialization.jsonObject(with: json, options: []) as? [String: Any] {
+                            if let code = jsonObject["code"] as? String, code == "0" {
+                                // token失效
+                                NetworkingManager.TokenExpire()
+                            } else {
+                                // 解析错误
+                                let model = NetworkingError(code: IntSafe(jsonObject["code"] as? String ?? ErrorCode.Analysis.rawValue),
+                                                            localizedDescription: jsonObject["msg"] as? String ?? "")
+                                failure(model)
+                            }
+                        } else {
+                            // 解析错误
+                            let desError = NetworkingError(code: error.responseCode ?? ErrorCode.Analysis.rawValue,
+                                                           localizedDescription: error.localizedDescription)
+                            failure(desError)
+                        }
+                    } catch {
+                        // 解析错误
+                        let desError = NetworkingError(code: ErrorCode.Analysis.rawValue,
+                                                       localizedDescription: error.localizedDescription)
+                        failure(desError)
+                    }
+                    
+                } else {
+                    if let responseCode = error.responseCode {
+                        failure(NetworkingError.init(code: responseCode, localizedDescription: "网络错误"))
+                    } else {
+                        failure(NetworkingError.init(code: ErrorCode.Unkonwn.rawValue, localizedDescription:"网络错误"))
+                    }
+                }
+            }
+        }
+    }
 
     
     

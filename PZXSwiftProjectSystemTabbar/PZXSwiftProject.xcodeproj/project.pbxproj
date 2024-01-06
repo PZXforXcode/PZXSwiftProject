@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		70EE9EC729FA0E6700F64E99 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70EE9EC629FA0E6700F64E99 /* SceneDelegate.swift */; };
+		89237DC72B48D69E00ABD6A5 /* CommonsNetWorking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89237DC62B48D69E00ABD6A5 /* CommonsNetWorking.swift */; };
 		898FC521265F334C00CEEF48 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898FC520265F334C00CEEF48 /* AppDelegate.swift */; };
 		898FC525265F334C00CEEF48 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 898FC524265F334C00CEEF48 /* ViewController.swift */; };
 		898FC528265F334C00CEEF48 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 898FC526265F334C00CEEF48 /* Main.storyboard */; };
@@ -56,6 +57,7 @@
 		0927B078FC779C58C8304414 /* Pods_PZXSwiftProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PZXSwiftProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D1477F9594CC36AEDE2F30D /* Pods-PZXSwiftProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PZXSwiftProject.debug.xcconfig"; path = "Target Support Files/Pods-PZXSwiftProject/Pods-PZXSwiftProject.debug.xcconfig"; sourceTree = "<group>"; };
 		70EE9EC629FA0E6700F64E99 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		89237DC62B48D69E00ABD6A5 /* CommonsNetWorking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonsNetWorking.swift; sourceTree = "<group>"; };
 		898FC51D265F334C00CEEF48 /* PZXSwiftProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PZXSwiftProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		898FC520265F334C00CEEF48 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		898FC524265F334C00CEEF48 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				898FC542265F7BC500CEEF48 /* NetConfig.swift */,
 				898FC540265F7B1800CEEF48 /* NetBaseModel.swift */,
 				898FC546265F7F3C00CEEF48 /* NetworkingManager.swift */,
+				89237DC62B48D69E00ABD6A5 /* CommonsNetWorking.swift */,
 			);
 			path = NetworkingManager;
 			sourceTree = "<group>";
@@ -474,6 +477,7 @@
 				89E58C602693FA0C007C58D8 /* UIView+Layer.m in Sources */,
 				89E58C672693FA0C007C58D8 /* Date+Field.swift in Sources */,
 				898FC547265F7F3C00CEEF48 /* NetworkingManager.swift in Sources */,
+				89237DC72B48D69E00ABD6A5 /* CommonsNetWorking.swift in Sources */,
 				89E58C612693FA0C007C58D8 /* UIView+Function.swift in Sources */,
 				898FC538265F653C00CEEF48 /* PublicConfig.swift in Sources */,
 				89E58C292693DA3C007C58D8 /* NSArray+HYBUnicodeReadable.m in Sources */,
