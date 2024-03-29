@@ -1,8 +1,8 @@
 PODS:
-  - Alamofire (5.8.1)
+  - Alamofire (5.9.0)
   - IQKeyboardManagerSwift (6.5.16)
-  - Kingfisher (7.10.0)
-  - MJRefresh (3.7.6)
+  - Kingfisher (7.11.0)
+  - MJRefresh (3.7.9)
   - R.swift (7.3.2)
   - RxCocoa (6.6.0):
     - RxRelay (= 6.6.0)
@@ -13,10 +13,10 @@ PODS:
   - RxRelay (6.6.0):
     - RxSwift (= 6.6.0)
   - RxSwift (6.6.0)
-  - SDWebImage (5.18.3):
-    - SDWebImage/Core (= 5.18.3)
-  - SDWebImage/Core (5.18.3)
-  - SnapKit (5.6.0)
+  - SDWebImage (5.19.1):
+    - SDWebImage/Core (= 5.19.1)
+  - SDWebImage/Core (5.19.1)
+  - SnapKit (5.7.1)
   - SVProgressHUD (2.3.1):
     - SVProgressHUD/Core (= 2.3.1)
   - SVProgressHUD/Core (2.3.1)
@@ -52,17 +52,17 @@ SPEC REPOS:
     - SwiftyJSON
 
 SPEC CHECKSUMS:
-  Alamofire: 3ca42e259043ee0dc5c0cdd76c4bc568b8e42af7
+  Alamofire: 02b772c9910e8eba1a079227c32fbd9e46c90a24
   IQKeyboardManagerSwift: 12d89768845bb77b55cc092ecc2b1f9370f06b76
-  Kingfisher: a18f05d3b6d37d8650ee4a3e61d57a28fc6207f6
-  MJRefresh: 2fe7fb43a5167ceda20bb7e63f130c04fd1814a5
+  Kingfisher: b9c985d864d43515f404f1ef4a8ce7d802ace3ac
+  MJRefresh: ff9e531227924c84ce459338414550a05d2aea78
   R.swift: 0af0d882f49f03711415cb4e5215daa977d8a480
   RxCocoa: 44a80de90e25b739b5aeaae3c8c371a32e3343cc
   RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 45eaa5db8ee4fb50e5ebd57deec0159e97fa51e6
   RxSwift: a4b44f7d24599f674deebd1818eab82e58410632
-  SDWebImage: 96e0c18ef14010b7485210e92fac888587ebb958
-  SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  SDWebImage: 40b0b4053e36c660a764958bff99eed16610acbb
+  SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
   SVProgressHUD: 4837c74bdfe2e51e8821c397825996a8d7de6e22
   SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
 

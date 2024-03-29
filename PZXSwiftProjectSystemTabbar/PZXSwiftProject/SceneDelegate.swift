@@ -119,6 +119,7 @@ extension SceneDelegate {
         let unselectColor = UIColor.black
 //        let tabbarBackgroundColor = UIColor.qmui_color(withHexString: "#84C9EF")
         let tabbarBackgroundColor = UIColor.white
+        let textFont = PZXSystemFont(14)
 
         //iOS13以上设置
         if #available(iOS 13.0, *) {
@@ -155,21 +156,22 @@ extension SceneDelegate {
             print("2")
 
             let tabBar13 = UITabBar.appearance()
-            
-            let appearnce = UITabBarAppearance()
-            let itemAppearance = UITabBarItemAppearance()
-            itemAppearance.normal.titleTextAttributes = [
-                NSAttributedString.Key.foregroundColor : unselectColor
-            ]
-            itemAppearance.selected.titleTextAttributes =  [
+
+            let tabBarAppearance = UITabBarAppearance()
+              tabBarAppearance.backgroundColor = .white
+              tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+                NSAttributedString.Key.font: textFont,
                 NSAttributedString.Key.foregroundColor : selectColor
-            ]
-            appearnce.stackedLayoutAppearance = itemAppearance
-            appearnce.configureWithOpaqueBackground()
-            appearnce.backgroundColor = tabbarBackgroundColor
-            tabBar13.standardAppearance = appearnce
+              ]
+              tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+                                NSAttributedString.Key.font: textFont,
+                                NSAttributedString.Key.foregroundColor : unselectColor
+              ]
+              tabBarAppearance.stackedLayoutAppearance.normal.iconColor = unselectColor
+              tabBarAppearance.stackedLayoutAppearance.selected.iconColor = selectColor
+            tabBar13.standardAppearance = tabBarAppearance
             if #available(iOS 15.0, *) {
-                tabBar13.scrollEdgeAppearance = appearnce
+                tabBar13.scrollEdgeAppearance = tabBarAppearance
             } else {
                 // Fallback on earlier versions
             }

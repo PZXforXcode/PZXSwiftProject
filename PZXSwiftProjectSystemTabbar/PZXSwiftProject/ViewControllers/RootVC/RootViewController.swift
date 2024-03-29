@@ -62,6 +62,22 @@ class RootViewController: UIViewController {
         return view
     }()
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        根目录手势关闭
+        if (self is HomePageViewController || self is ServerViewController) {
+
+            // 添加边缘侧滑手势
+            let edgeSwipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(disableEdgeSwipe(_:)))
+            edgeSwipeGesture.edges = .left  // 设置手势的边缘为左侧
+            view.addGestureRecognizer(edgeSwipeGesture)
+        }
+
+    }
+    
+    @objc func disableEdgeSwipe(_ recognizer: UIScreenEdgePanGestureRecognizer) {
+    }
+    
     
     //MARK:================👌Initialize👌================
     override func viewDidLoad() {
