@@ -101,7 +101,7 @@ class RootViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.view.addSubview(self.navBar)
 
-        if (self.navigationController?.viewControllers.count)! > 1 {
+        if (self.navigationController?.viewControllers.count ?? 0) > 1 {
             self.navBar.addSubview(self.backItem)
         }
         self.navBar.addSubview(self.leftItem)
