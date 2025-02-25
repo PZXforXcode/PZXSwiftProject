@@ -64,14 +64,22 @@ class RootViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        根目录手势关闭
-        if (self is HomePageViewController || self is ServerViewController) {
-
-            // 添加边缘侧滑手势
+        
+        //        根目录手势关闭
+        if let navigationController = self.navigationController, navigationController.viewControllers.first === self {
+            // 是根控制器，添加边缘侧滑手势
             let edgeSwipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(disableEdgeSwipe(_:)))
             edgeSwipeGesture.edges = .left  // 设置手势的边缘为左侧
             view.addGestureRecognizer(edgeSwipeGesture)
         }
+//        根目录手势关闭
+//        if (self is HomePageViewController || self is ServerViewController) {
+//
+//            // 添加边缘侧滑手势
+//            let edgeSwipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(disableEdgeSwipe(_:)))
+//            edgeSwipeGesture.edges = .left  // 设置手势的边缘为左侧
+//            view.addGestureRecognizer(edgeSwipeGesture)
+//        }
 
     }
     
