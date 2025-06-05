@@ -29,33 +29,175 @@ public func convertJSONToModel<T: Codable>(jsonObject: AnyObject, modelType: T.T
 
 class NetworkingManager {
 
-    public class func requestFunc<T: Codable>(apiModel: inout APIModel, success: @escaping NetSuccessClosure<T>, failure: @escaping NetFailedClosure) {
+    
+  
+    public class func requestFunc<T: Codable>(apiModel: inout APIModel,isCallOut:Bool = false, success: @escaping NetSuccessClosure<T>, failure: @escaping NetFailedClosure) -> Request? {
+        
+//        ///网络判断
+//        guard NetworkingManager().checkNetworkAvailability() else {
+//
+//            PCToastView.shared.show(title: DEF_LOCALIZED_STRING(key: "common.network"))
+//            return
+//        }
+        var localApiModel = apiModel  // 创建一个局部变量来存储 apiModel
 
         let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
-
-        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header,requestModifier: {$0.timeoutInterval = timeoutInterval}).response { (response) in
-
+        print("apiModel.paramDic = \(apiModel.paramDic)")
+        
+        let request = AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header,requestModifier: {$0.timeoutInterval = timeoutInterval}).response { (response) in
+            
             switch response.result {
             case .success(_):
                 let json = response.data ?? Data()
                 let decoder = JSONDecoder()
                 let jsonString = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
-
-                // 使用 try? 处理错误
-                do {
-                    let model = try decoder.decode(NetBaseModel<T>.self, from: json)
-                    
-                    print("model?.code = \(String(describing: model.code))")
-                    print("model?.success = \(String(describing: model.success))")
-                    print("model?.msg = \(String(describing: model.msg))")
-                    print("model?.data = \(String(describing: model.data))")
-                    
-                    success(model)
-                } catch let parsingError {
-                    // 解析错误，打印错误信息
-                    print("解析错误日志: \(parsingError)")
-                    failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: Analysis_Error))
+                
+                let statusCode = response.response?.statusCode ?? 0
+                print("statusCode = \(statusCode)")
+                // 打印请求的 URL
+                if let url = response.request?.url {
+                    print("PINGALAX Request URL: \(url)")
                 }
+                
+                
+                
+                
+                do {
+                    if let data = jsonString.data(using: .utf8) {
+                        if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
+//                            NSLog("PINGALAX jsonObject = \(jsonObject)")
+                            print("PINGALAX jsonObject = \(jsonObject)")
+
+                        }
+                    }
+                } catch {
+                    NSLog("PINGALAX Error converting JSON to NSDictionary: \(error)")
+                }
+                
+
+
+                
+                if (statusCode == 200 || statusCode == 400) {
+                    
+                    do {
+                        let model = try decoder.decode(NetBaseModel<T>.self, from: json)
+                        model.statusCode = statusCode
+                        
+            
+                        
+                        
+                        // 解析成功，执行成功的回调
+                        success(model)
+                    } catch let decodingError as DecodingError {
+                        // 解析错误，打印错误信息
+                        print("DecodingError: \(decodingError.localizedDescription)")
+                        
+                        switch decodingError {
+                        case .typeMismatch(let type, let context):
+                            print("Type mismatch for key \(context.codingPath): expected type \(type), found \(context.debugDescription)")
+                        case .valueNotFound(let type, let context):
+                            print("Value not found for key \(context.codingPath): expected type \(type), \(context.debugDescription)")
+                        case .keyNotFound(let key, _):
+                            print("Key not found: \(key)")
+                        case .dataCorrupted(let context):
+                            print("Data corrupted for key \(context.codingPath): \(context.debugDescription)")
+                        @unknown default:
+                            print("Unknown decoding error")
+                        }
+                        
+                        // 使用默认模型
+                        let defaultModel = NetBaseModel<T>.defaultModelOnDecodingError(decodingError)
+                        success(defaultModel)
+                        
+                    } catch let parsingError {
+                        // 其他错误类型的处理
+                        print("Error decoding JSON: \(parsingError.localizedDescription)")
+                        // 创建自定义的错误对象并执行失败的回调
+                        failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: "error"))
+                    }
+
+                    
+                } else {
+                    
+                    failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: "error"))
+
+                    
+                }
+                
+            case let .failure(error):
+                
+                //网络错误
+                let networkingError = NetworkingError.fromAFError(error)
+                failure(networkingError)
+            }
+        }
+        
+      return request
+        
+    }
+    
+    
+    
+    
+    
+    public class func requestDicFunc(apiModel: inout APIModel,isCallOut:Bool = false, success: @escaping NetSuccessDic, failure: @escaping NetFailedClosure) {
+        print("apiModel.paramDic = \(apiModel.paramDic)")
+
+        var localApiModel = apiModel  // 创建一个局部变量来存储 apiModel
+
+        let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
+        
+        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header,requestModifier: {$0.timeoutInterval = timeoutInterval}).response { (response) in
+            
+            switch response.result {
+            case .success(_):
+                let statusCode = response.response?.statusCode ?? 0
+//                print("statusCode = \(statusCode)")
+                let json = response.data ?? Data()
+                let jsonString = String(data: json, encoding: .utf8) ?? ""
+                // 打印请求的 URL
+                if let url = response.request?.url {
+                    print("PINGALAX dic Request URL: \(url)")
+                }
+                
+                if (statusCode == 200 || statusCode == 400) {
+                    
+                    do {
+                        if let data = jsonString.data(using: .utf8) {
+                            if var jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                                jsonObject["statusCode"] = statusCode
+                                
+                                let code = StringSafe(jsonObject["code"])
+                        
+
+                                
+                                
+                                success(jsonObject)
+                                
+                            }
+                            
+                            //打印字典
+                            if let Dic = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
+    //                            NSLog("PINGALAX Dic = \(Dic)")
+                                print("PINGALAX Dic = \(Dic)")
+
+                            }
+
+                     
+                        }
+                    } catch {
+                        print("Error converting JSON to [String: Any]: \(error)")
+                        failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: "error"))
+                    }
+                    
+                    
+                } else {
+                    
+                    failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription: "error"))
+
+                }
+                
+               
             case let .failure(error):
                 //网络错误
                 let networkingError = NetworkingError.fromAFError(error)
@@ -64,38 +206,6 @@ class NetworkingManager {
         }
     }
     
-    public class func requestDicFunc(apiModel: inout APIModel, success: @escaping NetSuccessDic, failure: @escaping NetFailedClosure) {
-        
-        let header = NetworkingManager.settingDefaultHttpHeaders(apiModel: apiModel)
-        
-        AF.request(apiModel.gettingFullUrl(), method: apiModel.requestConfig!.method, parameters: apiModel.paramDic, headers: header,requestModifier: {$0.timeoutInterval = timeoutInterval}).response { (response) in
-            
-            switch response.result {
-            case .success(_):
-                let json = response.data ?? Data()
-                let jsonString = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
-                // 打印请求的 URL
-                if let url = response.request?.url {
-                    print("Request URL: \(url)")
-                }
-                do {
-                    if let data = jsonString.data(using: .utf8) {
-                        if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                            print("jsonObject = \(jsonObject)")
-                            success(jsonObject)
-                        }
-                    }
-                } catch {
-                    print("Error converting JSON to [String: Any]: \(error)")
-                    failure(NetworkingError(code: ErrorCode.Analysis.rawValue, localizedDescription:"网络错误"))
-                }
-            case let .failure(error):
-                //网络错误
-                let networkingError = NetworkingError.fromAFError(error)
-                failure(networkingError)
-            }
-        }
-    }
 
     
     
