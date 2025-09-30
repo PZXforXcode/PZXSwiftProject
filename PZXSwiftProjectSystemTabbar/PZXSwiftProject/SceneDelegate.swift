@@ -78,36 +78,34 @@ extension SceneDelegate {
         let CarVC                = CarViewController()//行情
         let MineVC              = MineViewController()//个人中心
         
-        let homePageNavVC = UINavigationController.init(rootViewController: homePageVC)
-        let ServerNavVC = UINavigationController.init(rootViewController: ServerVC)
-        let CarNavVC = UINavigationController.init(rootViewController: CarVC)
-        let MineNavVC = UINavigationController.init(rootViewController: MineVC)
+        // 直接设置每个 ViewController 的 TabBarItem
+        homePageVC.tabBarItem.title = "首页"
+        homePageVC.tabBarItem.image = UIImage.init(named: "首页未选中")
+        homePageVC.tabBarItem.selectedImage = UIImage.init(named: "首页选中")
         
-        homePageNavVC.tabBarItem.title = "首页"
-        homePageNavVC.tabBarItem.image = UIImage.init(named: "首页未选中")
-        homePageNavVC.tabBarItem.selectedImage = UIImage.init(named: "首页选中")
+        ServerVC.tabBarItem.title = "二页"
+        ServerVC.tabBarItem.image = UIImage.init(named: "二页未选中")
+        ServerVC.tabBarItem.selectedImage = UIImage.init(named: "二页选中")
         
-        ServerNavVC.tabBarItem.title = "二页"
-        ServerNavVC.tabBarItem.image = UIImage.init(named: "二页未选中")
-        ServerNavVC.tabBarItem.selectedImage = UIImage.init(named: "二页选中")
+        CarVC.tabBarItem.title = "三页"
+        CarVC.tabBarItem.image = UIImage.init(named: "三页未选中")
+        CarVC.tabBarItem.selectedImage = UIImage.init(named: "三页选中")
         
-        CarNavVC.tabBarItem.title = "三页"
-        CarNavVC.tabBarItem.image = UIImage.init(named: "三页未选中")
-        CarNavVC.tabBarItem.selectedImage = UIImage.init(named: "三页选中")
+        MineVC.tabBarItem.title = "四页"
+        MineVC.tabBarItem.image = UIImage.init(named: "四页未选中")
+        MineVC.tabBarItem.selectedImage = UIImage.init(named: "四页选中")
         
-        MineNavVC.tabBarItem.title = "四页"
-        MineNavVC.tabBarItem.image = UIImage.init(named: "四页未选中")
-        MineNavVC.tabBarItem.selectedImage = UIImage.init(named: "四页选中")
-        
-        let viewControllers = [homePageNavVC,ServerNavVC,CarNavVC,MineNavVC]
+        let viewControllers = [homePageVC, ServerVC, CarVC, MineVC]
         
         let tabBarController = MainTabBarControllerViewController.init()
         tabBarController.setViewControllers(viewControllers, animated: true);
-//        tabBarController.viewControllers = viewControllers;
         tabBarController.selectedIndex = 0
         
+        // 用一个 NavigationController 包装整个 TabBarController
+        let rootNavigationController = UINavigationController(rootViewController: tabBarController)
+        
         settingCustomizeInterface()
-        window.rootViewController = tabBarController
+        window.rootViewController = rootNavigationController
         self.window = window
         window.makeKeyAndVisible()
         
