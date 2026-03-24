@@ -641,7 +641,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KCNSS22SRZ;
 				INFOPLIST_FILE = PZXSwiftProject/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SwiftProject;
+				INFOPLIST_KEY_CFBundleDisplayName = SwiftProject0;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -673,7 +673,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KCNSS22SRZ;
 				INFOPLIST_FILE = PZXSwiftProject/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SwiftProject;
+				INFOPLIST_KEY_CFBundleDisplayName = SwiftProject0;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
